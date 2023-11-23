@@ -5,6 +5,10 @@ class GitUtils {
   final RepositoryModel repositoryModel;
   GitUtils({required this.repositoryModel});
 
+  Future<String> version() async {
+    return await _executeCommand('git --version', path: '/');
+  }
+
   Future<String> config(String username, String email) async {
     String result = await _executeCommand(
       'git config --global user.name "$username"',
@@ -70,6 +74,8 @@ class GitUtils {
   Future<String> _executeCommand(String command, {String? path}) async {
     final shell = Shell(workingDirectory: path ?? repositoryModel.path);
     final processResult = await shell.run(command);
-    return processResult.stdout.toString();
+    final String error = processResult.stderr?.toString() ?? '';
+    final String result = processResult.stdout?.toString() ?? '';
+    return result.isEmpty ? error : result;
   }
 }
