@@ -52,6 +52,23 @@ class GitUtils {
     return await _executeCommand('git pull');
   }
 
+  Future<void> add([List<String>? files]) async {
+    if (files != null) {
+      for (final String file in files) {
+        await _executeCommand('git add $file');
+      }
+    } else {
+      await _executeCommand('git add *');
+    }
+  }
+
+  Future<String> commit([String? message]) async {
+    final String commitMessage = (message == null || message.trim().isEmpty)
+        ? '[GitF] Alterações sem descrição.'
+        : message;
+    return await _executeCommand('git commit -m "$commitMessage"');
+  }
+
   Future<String> push() async {
     return await _executeCommand('git push');
   }
@@ -59,33 +76,13 @@ class GitUtils {
   Future<String> commitAndPush([String? message]) async {
     final bool hasChanges = await repositoryHasChanges();
     if (hasChanges) {
-      String result = await add();
-      result += await commit(
-        (message == null || message.trim().isEmpty)
-            ? 'Commit automatico criado pelo GitF'
-            : message,
-      );
-      result += await push();
-      return result;
+      await add();
+      await commit(message);
+      await push();
+      return 'Alterações enviadas com sucesso.';
     } else {
-      return "\nNão há alterações a serem enviadas\n";
+      return "Não há alterações a serem enviadas.";
     }
-  }
-
-  Future<String> add([List<String>? files]) async {
-    if (files != null) {
-      String result = "";
-      for (final String file in files) {
-        result += '\n\n${await _executeCommand('git add $file')}';
-      }
-      return result;
-    } else {
-      return await _executeCommand('git add *');
-    }
-  }
-
-  Future<String> commit(String message) async {
-    return await _executeCommand('git commit -m "$message"');
   }
 
   Future<String> log() async {
@@ -93,16 +90,21 @@ class GitUtils {
   }
 
   Future<bool> repositoryHasChanges() async {
-    final shell = Shell(workingDirectory: repositoryModel.path);
-    final processResult = await shell.run('git diff');
-    return processResult.outText.isNotEmpty;
+    return (await _executeCommand('git diff')).isNotEmpty;
   }
 
-  Future<String> _executeCommand(String command, {String? path}) async {
-    final shell = Shell(workingDirectory: path ?? repositoryModel.path);
-    final processResult = await shell.run(command);
-    final String error = processResult.errText;
-    final String result = processResult.outText;
-    return "\nComando executado: $command${result.isNotEmpty ? '\n- Resultado: $result' : ''}${error.isNotEmpty ? '\n- Erro: $error' : ''}\n";
+  Future<String> _executeCommand(
+    String command, {
+    String? path,
+  }) async {
+    try {
+      final shell = Shell(workingDirectory: path ?? repositoryModel.path);
+      final processResult = await shell.run(command);
+      final String error = processResult.errText;
+      final String result = processResult.outText;
+      return (result.isEmpty && error.isNotEmpty) ? error : result;
+    } catch (_) {
+      return 'Ocorreu um erro na execução do comando. Tente novamente.';
+    }
   }
 }
