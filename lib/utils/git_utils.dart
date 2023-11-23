@@ -33,8 +33,11 @@ class GitUtils {
     return await _executeCommand('git reset --hard');
   }
 
-  Future<String> addRemote(String url, {String name = 'origin'}) async {
-    return await _executeCommand('git remote add $name $url');
+  Future<String> changeRemote(String url, {String name = 'origin'}) async {
+    await removeRemote(name: name);
+    final String result = await _executeCommand('git remote add $name $url');
+    await fetch();
+    return result;
   }
 
   Future<String> removeRemote({String name = 'origin'}) async {
@@ -46,6 +49,7 @@ class GitUtils {
     if (result.startsWith('[ERROR]')) {
       return result;
     } else {
+      await pull();
       return 'Branch alterada para: $branch';
     }
   }
