@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gitf/models/repository_model.dart';
@@ -187,11 +189,32 @@ class _StartPageState extends State<StartPage> {
   Future<void> _openRepository() async {
     final String? path = await FilePicker.platform.getDirectoryPath();
     if (path != null) {
-      setState(() {
-        _recents.remove(path);
-        _recents.add(path);
-      });
-      await _saveRecents();
+      final dir = Directory.fromUri(Uri.directory('$path/.git'));
+      if (await dir.exists()) {
+        setState(() {
+          _recents.remove(path);
+          _recents.add(path);
+        });
+        _saveRecents();
+        _open(RepositoryModel.fromPath(path));
+      } else {
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text('Diretório inválido'),
+            content: const Text(
+              'O diretório selecionado não é um repositório do Git.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: Navigator.of(context).pop,
+                child: const Text('Fechar'),
+              ),
+            ],
+          ),
+        );
+      }
     }
   }
 
