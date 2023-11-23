@@ -178,7 +178,9 @@ class _RepositoryPageState extends State<RepositoryPage> {
             executeCommand() async {
               setState(() => _isLoading = true);
               final String result = await command.call();
-              final String log = '$result${this.log}';
+              final String log =
+                  '$result\n--------------------------------------------------\n${this.log}';
+
               setState(() {
                 this.log = log;
                 _isLoading = false;
