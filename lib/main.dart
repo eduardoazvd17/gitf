@@ -17,12 +17,15 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.blue,
+          surfaceTint: Colors.transparent,
+          brightness: Brightness.light,
         ),
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.blue,
+          surfaceTint: Colors.transparent,
           brightness: Brightness.dark,
         ),
         useMaterial3: true,

@@ -28,67 +28,69 @@ class _StartPageState extends State<StartPage> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      if (constraints.maxWidth >= 768) {
-        return Scaffold(
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                _menuContent,
-                const Padding(
-                  padding: EdgeInsets.only(right: 12.0),
-                  child: VerticalDivider(),
-                ),
-                Expanded(child: _recentsContent()),
-              ],
-            ),
-          ),
-        );
-      } else {
-        return Scaffold(
-          drawer: Drawer(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 30.0),
-                  child: Column(
-                    children: [
-                      Text(
-                        'GitF',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 5),
-                      const Text('Gerenciamento de Repositórios'),
-                    ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth >= 768) {
+          return Scaffold(
+            body: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  _menuContent,
+                  const Padding(
+                    padding: EdgeInsets.only(right: 12.0),
+                    child: VerticalDivider(),
                   ),
-                ),
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: _menuContent,
+                  Expanded(child: _recentsContent()),
+                ],
+              ),
+            ),
+          );
+        } else {
+          return Scaffold(
+            drawer: Drawer(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 30.0),
+                    child: Column(
+                      children: [
+                        Text(
+                          'GitF',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 5),
+                        const Text('Gerenciamento de Repositórios'),
+                      ],
+                    ),
+                  ),
+                  const Divider(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: _menuContent,
+                  ),
+                ],
+              ),
+            ),
+            appBar: AppBar(
+              title: const Text('Recentes'),
+              actions: [
+                IconButton(
+                  onPressed:
+                      (_isLoading || _recents.isEmpty) ? null : _clearRecents,
+                  color: Colors.red,
+                  icon: const Icon(Icons.delete_forever),
                 ),
               ],
             ),
-          ),
-          appBar: AppBar(
-            title: const Text('Recentes'),
-            actions: [
-              IconButton(
-                onPressed:
-                    (_isLoading || _recents.isEmpty) ? null : _clearRecents,
-                color: Colors.red,
-                icon: const Icon(Icons.delete_forever),
-              ),
-            ],
-          ),
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: _recentsContent(showHeader: false),
-          ),
-        );
-      }
-    });
+            body: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: _recentsContent(showHeader: false),
+            ),
+          );
+        }
+      },
+    );
   }
 
   Widget _recentsContent({bool showHeader = true}) => Column(
