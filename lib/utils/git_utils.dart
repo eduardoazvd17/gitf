@@ -1,5 +1,5 @@
 import 'package:gitf/models/repository_model.dart';
-import 'package:shell/shell.dart';
+import 'package:process_run/process_run.dart';
 
 class GitUtils {
   final RepositoryModel repositoryModel;
@@ -74,8 +74,8 @@ class GitUtils {
   Future<String> _executeCommand(String command, {String? path}) async {
     final shell = Shell(workingDirectory: path ?? repositoryModel.path);
     final processResult = await shell.run(command);
-    final String error = processResult.stderr?.toString() ?? '';
-    final String result = processResult.stdout?.toString() ?? '';
+    final String error = processResult.errText;
+    final String result = processResult.outText;
     return result.isEmpty ? error : result;
   }
 }
