@@ -13,9 +13,7 @@ class _RepositoryPageState extends State<RepositoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.repository.name),
-      ),
+      appBar: AppBar(title: Text(widget.repository.name)),
       body: Center(child: Text(widget.repository.path)),
     );
   }
