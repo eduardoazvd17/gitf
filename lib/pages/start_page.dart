@@ -50,10 +50,20 @@ class _StartPageState extends State<StartPage> {
           drawer: Drawer(
             child: Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 30.0),
-                  child: Icon(Icons.menu),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 30.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        'GitF',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 5),
+                      const Text('Gerenciamento de Repositórios'),
+                    ],
+                  ),
                 ),
+                const Divider(),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: _menuContent,
@@ -86,7 +96,7 @@ class _StartPageState extends State<StartPage> {
         children: [
           if (showHeader)
             Padding(
-              padding: const EdgeInsets.only(top: 5),
+              padding: const EdgeInsets.only(top: 4),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
