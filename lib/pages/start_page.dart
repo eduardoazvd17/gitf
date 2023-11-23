@@ -110,7 +110,10 @@ class _StartPageState extends State<StartPage> {
                 children: _recents.reversed.map((e) {
                   return Padding(
                     padding: const EdgeInsets.all(5.0),
-                    child: ListTile(title: Text(e)),
+                    child: ListTile(
+                      onTap: () => _open(e),
+                      title: Text(e),
+                    ),
                   );
                 }).toList(),
               ),
@@ -123,6 +126,7 @@ class _StartPageState extends State<StartPage> {
         child: Column(
           children: [
             ListTile(
+              enabled: false,
               onTap: _newRepository,
               leading: const Icon(Icons.add),
               title: const Text('Criar um novo repositório'),
@@ -163,4 +167,6 @@ class _StartPageState extends State<StartPage> {
       await _saveRecents();
     }
   }
+
+  void _open(String path) {}
 }
