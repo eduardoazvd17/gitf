@@ -60,13 +60,7 @@ class _RepositoryPageState extends State<RepositoryPage> {
           } else {
             return Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: _menuContent(),
-                  ),
-                ),
+                _menuContent(direction: Axis.horizontal),
                 Expanded(child: _logContent),
               ],
             );
@@ -78,12 +72,21 @@ class _RepositoryPageState extends State<RepositoryPage> {
 
   Widget _menuContent({Axis direction = Axis.vertical}) {
     List<Widget> options = [
-      _commandButton(title: 'Git Pull', command: git.pull),
+      _commandButton(title: 'Sincronizar', command: git.fetch),
+      _commandButton(title: 'Pegar alterações', command: git.pull),
+      _commandButton(title: 'Enviar alterações', command: git.commitAndPush),
+      _commandButton(title: 'Histórico de envios', command: git.log),
+      _commandButton(
+        title: 'Abandonar alterações',
+        command: git.resetHard,
+        showConfirmation: true,
+      ),
+      _commandButton(title: 'Versão do Git', command: git.version),
     ];
     if (direction == Axis.vertical) {
       return Column(children: options);
     } else {
-      return Row(children: options);
+      return Wrap(children: options);
     }
   }
 
@@ -137,22 +140,55 @@ class _RepositoryPageState extends State<RepositoryPage> {
   Widget _commandButton({
     required String title,
     required Future<String> Function() command,
+    bool showConfirmation = false,
   }) {
     final Future<void> Function()? onTap = _isLoading
         ? null
         : () async {
-            setState(() => _isLoading = true);
-            final String result = await command.call();
-            final String log = '$result${this.log}';
-            setState(() {
-              this.log = log;
-              _isLoading = false;
-            });
+            executeCommand() async {
+              setState(() => _isLoading = true);
+              final String result = await command.call();
+              final String log = '$result${this.log}';
+              setState(() {
+                this.log = log;
+                _isLoading = false;
+              });
+            }
+
+            if (showConfirmation) {
+              showDialog(
+                context: context,
+                builder: (_) => AlertDialog(
+                  title: const Text('Atenção'),
+                  content: Text(
+                    'Deseja realmente executar o comando: "$title"?.',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () async {
+                        executeCommand();
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Sim'),
+                    ),
+                    TextButton(
+                      onPressed: Navigator.of(context).pop,
+                      child: const Text('Não'),
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              executeCommand();
+            }
           };
 
-    return TextButton(
-      onPressed: onTap,
-      child: Text(title),
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: TextButton(
+        onPressed: onTap,
+        child: Text(title),
+      ),
     );
   }
 }

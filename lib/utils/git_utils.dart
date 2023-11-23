@@ -27,6 +27,10 @@ class GitUtils {
     return await _executeCommand('git init');
   }
 
+  Future<String> resetHard() async {
+    return await _executeCommand('git reset --hard');
+  }
+
   Future<String> addRemote(String url, {String name = 'origin'}) async {
     return await _executeCommand('git remote add $name $url');
   }
@@ -44,11 +48,19 @@ class GitUtils {
   }
 
   Future<String> pull() async {
+    await fetch();
     return await _executeCommand('git pull');
   }
 
   Future<String> push() async {
     return await _executeCommand('git push');
+  }
+
+  Future<String> commitAndPush() async {
+    String result = await add();
+    result += await commit('Commit automatico criado pelo GitF');
+    result += await push();
+    return result;
   }
 
   Future<String> add([List<String>? files]) async {
