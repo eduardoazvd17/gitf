@@ -5,6 +5,18 @@ class GitUtils {
   final RepositoryModel repositoryModel;
   GitUtils({required this.repositoryModel});
 
+  Future<String> init() async {
+    return await _executeCommand('git init');
+  }
+
+  Future<String> addRemote(String url, {String name = 'origin'}) async {
+    return await _executeCommand('git remote add $name $url');
+  }
+
+  Future<String> removeRemote({String name = 'origin'}) async {
+    return await _executeCommand('git remote remove $name');
+  }
+
   Future<String> checkout(String branch) async {
     return await _executeCommand('git checkout -b $branch');
   }
