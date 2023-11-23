@@ -30,7 +30,12 @@ class GitUtils {
   }
 
   Future<String> resetHard() async {
-    return await _executeCommand('git reset --hard');
+    final String result = await _executeCommand('git reset --hard');
+    if (result.startsWith('[ERROR]')) {
+      return result;
+    } else {
+      return 'Alterações abandonadas com sucesso ($result)';
+    }
   }
 
   Future<String> changeRemote(String url, {String name = 'origin'}) async {
@@ -112,7 +117,7 @@ class GitUtils {
   }
 
   Future<String> log() async {
-    return await _executeCommand('git log');
+    return await _executeCommand('git log --shortstat');
   }
 
   Future<bool> repositoryHasChanges() async {
