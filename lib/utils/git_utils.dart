@@ -5,6 +5,10 @@ class GitUtils {
   final RepositoryModel repositoryModel;
   GitUtils({required this.repositoryModel});
 
+  Future<String> clone(String url, String path) async {
+    return await _executeCommand('git clone $url', path: path);
+  }
+
   Future<String> init() async {
     return await _executeCommand('git init');
   }
@@ -49,8 +53,8 @@ class GitUtils {
     return await _executeCommand('git commit -m "$message"');
   }
 
-  Future<String> _executeCommand(String command) async {
-    final shell = Shell(workingDirectory: repositoryModel.path);
+  Future<String> _executeCommand(String command, {String? path}) async {
+    final shell = Shell(workingDirectory: path ?? repositoryModel.path);
     final processResult = await shell.run(command);
     return processResult.stdout.toString();
   }
