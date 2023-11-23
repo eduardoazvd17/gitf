@@ -9,14 +9,16 @@ class GitUtils {
     return await _executeCommand('git --version');
   }
 
-  Future<String> config(String username, String email) async {
-    String result = await _executeCommand(
-      'git config --global user.name "$username"',
-    );
-    result += '\n\n${await _executeCommand(
-      'git config --global user.email "$email"',
-    )}';
-    return result;
+  Future<bool> checkConfig() async {
+    final String name = await _executeCommand('git config --global user.name');
+    final String email =
+        await _executeCommand('git config --global user.email');
+    return name.isNotEmpty && email.isNotEmpty;
+  }
+
+  Future<void> setConfig(String username, String email) async {
+    await _executeCommand('git config --global user.name "$username"');
+    await _executeCommand('git config --global user.email "$email"');
   }
 
   Future<String> clone(String url, String path) async {
