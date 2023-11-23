@@ -56,11 +56,15 @@ class GitUtils {
     return await _executeCommand('git push');
   }
 
-  Future<String> commitAndPush() async {
+  Future<String> commitAndPush([String? message]) async {
     final bool hasChanges = await repositoryHasChanges();
     if (hasChanges) {
       String result = await add();
-      result += await commit('Commit automatico criado pelo GitF');
+      result += await commit(
+        (message == null || message.trim().isEmpty)
+            ? 'Commit automatico criado pelo GitF'
+            : message,
+      );
       result += await push();
       return result;
     } else {

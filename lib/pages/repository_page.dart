@@ -14,7 +14,7 @@ class RepositoryPage extends StatefulWidget {
 }
 
 class _RepositoryPageState extends State<RepositoryPage> {
-  final ScrollController logScrollController = ScrollController();
+  final TextEditingController commitMessageController = TextEditingController();
   bool _isLoading = false;
   String log = '';
   late final GitUtils git;
@@ -42,51 +42,83 @@ class _RepositoryPageState extends State<RepositoryPage> {
           ),
         ],
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth >= 768) {
-            return Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 300),
-                    child: _menuContent(),
-                  ),
-                ),
-                Expanded(child: _logContent),
-              ],
-            );
-          } else {
-            return Column(
-              children: [
-                _menuContent(direction: Axis.horizontal),
-                Expanded(child: _logContent),
-              ],
-            );
-          }
-        },
+      body: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 200),
+              child: _menuContent,
+            ),
+          ),
+          Expanded(child: _logContent),
+        ],
       ),
     );
   }
 
-  Widget _menuContent({Axis direction = Axis.vertical}) {
-    List<Widget> options = [
-      _commandButton(title: 'Pegar alterações', command: git.pull),
-      _commandButton(title: 'Enviar alterações', command: git.commitAndPush),
-      _commandButton(title: 'Histórico de envios', command: git.log),
-      _commandButton(
-        title: 'Abandonar alterações',
-        command: git.resetHard,
-        showConfirmation: true,
+  Widget get _menuContent {
+    const style = TextStyle(color: Colors.grey);
+
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          const Text(
+            'Antes de fazer alterações, atualize o repositório:',
+            style: style,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: _commandButton(
+              title: 'Atualizar repositório',
+              command: git.pull,
+            ),
+          ),
+          const Text(
+            'Após fazer alterações, insira a mensagem de envio (opcional) e clique em enviar alterações:',
+            style: style,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Column(
+              children: [
+                TextField(
+                  controller: commitMessageController,
+                  decoration: const InputDecoration(hintText: "Mensagem..."),
+                ),
+                _commandButton(
+                  title: 'Enviar alterações',
+                  command: () async {
+                    final String message = commitMessageController.text;
+                    commitMessageController.clear();
+                    return await git.commitAndPush(message);
+                  },
+                ),
+              ],
+            ),
+          ),
+          const Text(
+            'Caso deseje abandonar as alterações recentes, clique no botão abaixo:',
+            style: style,
+          ),
+          _commandButton(
+            title: 'Abandonar alterações',
+            command: git.resetHard,
+            showConfirmation: true,
+          ),
+          const Text(
+            'Para visualizar o histórico de envios, clique no botão abaixo:',
+            style: style,
+          ),
+          _commandButton(title: 'Histórico de envios', command: git.log),
+          const Text(
+            'Para visualizar a versão instalada do Git, clique no botão abaixo:',
+            style: style,
+          ),
+          _commandButton(title: 'Versão do Git', command: git.version),
+        ],
       ),
-      _commandButton(title: 'Versão do Git', command: git.version),
-    ];
-    if (direction == Axis.vertical) {
-      return Column(children: options);
-    } else {
-      return Wrap(children: options);
-    }
+    );
   }
 
   Widget get _logContent => Container(
@@ -124,7 +156,6 @@ class _RepositoryPageState extends State<RepositoryPage> {
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  controller: logScrollController,
                   child: SelectableText(
                     log,
                     style: const TextStyle(color: Colors.white),
@@ -183,7 +214,7 @@ class _RepositoryPageState extends State<RepositoryPage> {
           };
 
     return Padding(
-      padding: const EdgeInsets.all(5.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextButton(
         onPressed: onTap,
         child: Text(title),
