@@ -5,6 +5,16 @@ class GitUtils {
   final RepositoryModel repositoryModel;
   GitUtils({required this.repositoryModel});
 
+  Future<String> config(String username, String email) async {
+    String result = await _executeCommand(
+      'git config --global user.name "$username"',
+    );
+    result += '\n\n${await _executeCommand(
+      'git config --global user.email "$email"',
+    )}';
+    return result;
+  }
+
   Future<String> clone(String url, String path) async {
     return await _executeCommand('git clone $url', path: path);
   }
@@ -51,6 +61,10 @@ class GitUtils {
 
   Future<String> commit(String message) async {
     return await _executeCommand('git commit -m "$message"');
+  }
+
+  Future<String> log() async {
+    return await _executeCommand('git log');
   }
 
   Future<String> _executeCommand(String command, {String? path}) async {
