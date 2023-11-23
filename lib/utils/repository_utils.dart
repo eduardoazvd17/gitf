@@ -1,9 +1,17 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:open_dir/open_dir.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RepositoryUtils {
+  static void openDirectory(String path) async {
+    try {
+      final openDir = OpenDir();
+      await openDir.openNativeDir(path: path);
+    } catch (_) {}
+  }
+
   static Future<String?> select() async {
     try {
       return await FilePicker.platform.getDirectoryPath();

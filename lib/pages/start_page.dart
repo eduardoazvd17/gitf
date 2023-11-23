@@ -136,15 +136,28 @@ class _StartPageState extends State<StartPage> {
                         repository.path,
                         style: const TextStyle(color: Colors.grey),
                       ),
-                      trailing: IconButton(
-                        onPressed: () {
-                          setState(() => _recents.remove(e));
-                          RepositoryUtils.saveRecents(_recents);
-                        },
-                        icon: Icon(
-                          Icons.delete,
-                          color: Colors.red[200],
-                        ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            onPressed: () => RepositoryUtils.openDirectory(e),
+                            icon: const Icon(
+                              Icons.folder,
+                              color: Colors.blue,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          IconButton(
+                            onPressed: () {
+                              setState(() => _recents.remove(e));
+                              RepositoryUtils.saveRecents(_recents);
+                            },
+                            icon: Icon(
+                              Icons.delete,
+                              color: Colors.red[200],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   );
