@@ -88,6 +88,6 @@ class GitUtils {
     final processResult = await shell.run(command);
     final String error = processResult.errText;
     final String result = processResult.outText;
-    return "\nComando executado: $command\n${result.isNotEmpty ? '- Resultado: $result' : ''}${error.isNotEmpty ? '- Erro: $error' : ''}\n";
+    return "\nComando executado: $command${result.isNotEmpty ? '\n- Resultado: $result' : ''}${error.isNotEmpty ? '\n- Erro: $error' : ''}\n";
   }
 }
