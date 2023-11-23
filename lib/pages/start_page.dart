@@ -1,10 +1,8 @@
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gitf/models/repository_model.dart';
 import 'package:gitf/pages/repository_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import '../utils/repository_utils.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({super.key});
@@ -135,7 +133,7 @@ class _StartPageState extends State<StartPage> {
                       trailing: IconButton(
                         onPressed: () {
                           setState(() => _recents.remove(e));
-                          _saveRecents();
+                          RepositoryUtils.saveRecents(_recents);
                         },
                         icon: Icon(
                           Icons.delete,
@@ -170,16 +168,11 @@ class _StartPageState extends State<StartPage> {
         ),
       );
 
-  Future<void> _saveRecents() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setStringList('Recents', _recents);
-  }
-
   Future<void> _loadRecents() async {
     if (!_isLoading) setState(() => _isLoading = true);
-    final prefs = await SharedPreferences.getInstance();
+    final List<String> recents = await RepositoryUtils.loadRecents();
     setState(() {
-      _recents = prefs.getStringList('Recents') ?? [];
+      _recents = recents;
       _isLoading = false;
     });
   }
@@ -187,15 +180,14 @@ class _StartPageState extends State<StartPage> {
   Future<void> _newRepository() async {}
 
   Future<void> _openRepository() async {
-    final String? path = await FilePicker.platform.getDirectoryPath();
+    final String? path = await RepositoryUtils.select();
     if (path != null) {
-      final dir = Directory.fromUri(Uri.directory('$path/.git'));
-      if (await dir.exists()) {
+      if (await RepositoryUtils.validate(path)) {
         setState(() {
           _recents.remove(path);
           _recents.add(path);
         });
-        _saveRecents();
+        RepositoryUtils.saveRecents(_recents);
         _open(RepositoryModel.fromPath(path));
       } else {
         // ignore: use_build_context_synchronously
@@ -237,7 +229,7 @@ class _StartPageState extends State<StartPage> {
           TextButton(
             onPressed: () {
               setState(() => _recents.clear());
-              _saveRecents();
+              RepositoryUtils.saveRecents(_recents);
               Navigator.of(context).pop();
             },
             child: const Text('Sim'),
