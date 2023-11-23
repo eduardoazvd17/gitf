@@ -1,5 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:gitf/models/repository_model.dart';
+import 'package:gitf/pages/repository_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StartPage extends StatefulWidget {
@@ -108,11 +110,16 @@ class _StartPageState extends State<StartPage> {
             Expanded(
               child: ListView(
                 children: _recents.reversed.map((e) {
+                  final repository = RepositoryModel.fromPath(e);
                   return Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: ListTile(
-                      onTap: () => _open(e),
-                      title: Text(e),
+                      onTap: () => _open(repository),
+                      title: Text(repository.name),
+                      subtitle: Text(
+                        repository.path,
+                        style: const TextStyle(color: Colors.grey),
+                      ),
                     ),
                   );
                 }).toList(),
@@ -168,5 +175,11 @@ class _StartPageState extends State<StartPage> {
     }
   }
 
-  void _open(String path) {}
+  void _open(RepositoryModel repository) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => RepositoryPage(repository: repository),
+      ),
+    );
+  }
 }
