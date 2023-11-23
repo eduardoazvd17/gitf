@@ -291,6 +291,7 @@ class _StartPageState extends State<StartPage> {
       context: context,
       builder: (_) => AlertDialog.adaptive(
         content: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               'GitF',
