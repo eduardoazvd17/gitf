@@ -72,7 +72,6 @@ class _RepositoryPageState extends State<RepositoryPage> {
 
   Widget _menuContent({Axis direction = Axis.vertical}) {
     List<Widget> options = [
-      _commandButton(title: 'Sincronizar', command: git.fetch),
       _commandButton(title: 'Pegar alterações', command: git.pull),
       _commandButton(title: 'Enviar alterações', command: git.commitAndPush),
       _commandButton(title: 'Histórico de envios', command: git.log),

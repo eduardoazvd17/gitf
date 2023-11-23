@@ -57,10 +57,15 @@ class GitUtils {
   }
 
   Future<String> commitAndPush() async {
-    String result = await add();
-    result += await commit('Commit automatico criado pelo GitF');
-    result += await push();
-    return result;
+    final bool hasChanges = await repositoryHasChanges();
+    if (hasChanges) {
+      String result = await add();
+      result += await commit('Commit automatico criado pelo GitF');
+      result += await push();
+      return result;
+    } else {
+      return "\nNão há alterações a serem enviadas\n";
+    }
   }
 
   Future<String> add([List<String>? files]) async {
@@ -81,6 +86,12 @@ class GitUtils {
 
   Future<String> log() async {
     return await _executeCommand('git log');
+  }
+
+  Future<bool> repositoryHasChanges() async {
+    final shell = Shell(workingDirectory: repositoryModel.path);
+    final processResult = await shell.run('git diff');
+    return processResult.outText.isNotEmpty;
   }
 
   Future<String> _executeCommand(String command, {String? path}) async {
