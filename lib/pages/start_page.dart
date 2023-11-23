@@ -17,7 +17,12 @@ class _StartPageState extends State<StartPage> {
 
   @override
   void initState() {
-    _loadRecents();
+    RepositoryUtils.loadRecents().then((recents) {
+      setState(() {
+        _recents = recents;
+        _isLoading = false;
+      });
+    });
     super.initState();
   }
 
@@ -167,15 +172,6 @@ class _StartPageState extends State<StartPage> {
           ],
         ),
       );
-
-  Future<void> _loadRecents() async {
-    if (!_isLoading) setState(() => _isLoading = true);
-    final List<String> recents = await RepositoryUtils.loadRecents();
-    setState(() {
-      _recents = recents;
-      _isLoading = false;
-    });
-  }
 
   Future<void> _newRepository() async {}
 
