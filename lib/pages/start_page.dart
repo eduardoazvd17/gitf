@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gitf/models/repository_model.dart';
 import 'package:gitf/pages/repository_page.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../utils/repository_utils.dart';
 
@@ -209,6 +210,12 @@ class _StartPageState extends State<StartPage> {
               leading: const Icon(Icons.open_in_browser),
               title: const Text('Abrir um repositório existente'),
             ),
+            const SizedBox(height: 16),
+            ListTile(
+              onTap: _aboutApp,
+              leading: const Icon(Icons.info_outline),
+              title: const Text('Sobre'),
+            ),
           ],
         ),
       );
@@ -229,7 +236,7 @@ class _StartPageState extends State<StartPage> {
         // ignore: use_build_context_synchronously
         showDialog(
           context: context,
-          builder: (_) => AlertDialog(
+          builder: (_) => AlertDialog.adaptive(
             title: const Text('Diretório inválido'),
             content: const Text(
               'O diretório selecionado não é um repositório do Git.',
@@ -257,7 +264,7 @@ class _StartPageState extends State<StartPage> {
   void _clearRecents() {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
+      builder: (_) => AlertDialog.adaptive(
         title: const Text('Limpar recentes'),
         content: const Text(
             'Deseja realmente limpar a lista de repositórios acessados recentemente?'),
@@ -273,6 +280,57 @@ class _StartPageState extends State<StartPage> {
           TextButton(
             onPressed: Navigator.of(context).pop,
             child: const Text('Não'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _aboutApp() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog.adaptive(
+        content: Column(
+          children: [
+            Text(
+              'GitF',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 5),
+            const Text('Gerenciamento de Repositórios'),
+            const SizedBox(height: 15),
+            const Text('Desenvolvido por: Eduardo Azevedo'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    launchUrlString(
+                      'https://www.linkedin.com/in/eduardoazvd17/',
+                    );
+                  },
+                  child: const Text('LinkedIn'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    launchUrlString('https://github.com/eduardoazvd17/');
+                  },
+                  child: const Text('GitHub'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    launchUrlString('https://eduardoazevedo.com/');
+                  },
+                  child: const Text('Site'),
+                ),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: Navigator.of(context).pop,
+            child: const Text('Fechar'),
           ),
         ],
       ),

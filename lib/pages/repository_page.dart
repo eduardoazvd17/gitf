@@ -188,7 +188,7 @@ class _RepositoryPageState extends State<RepositoryPage> {
             if (showConfirmation) {
               showDialog(
                 context: context,
-                builder: (_) => AlertDialog(
+                builder: (_) => AlertDialog.adaptive(
                   title: const Text('Atenção'),
                   content: Text(
                     'Deseja realmente executar o comando: "$title"?.',
