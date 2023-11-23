@@ -31,9 +31,6 @@ class _StartPageState extends State<StartPage> {
     return LayoutBuilder(builder: (context, constraints) {
       if (constraints.maxWidth >= 768) {
         return Scaffold(
-          appBar: AppBar(
-            title: const Text('GitF'),
-          ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
@@ -43,7 +40,7 @@ class _StartPageState extends State<StartPage> {
                   padding: EdgeInsets.only(right: 12.0),
                   child: VerticalDivider(),
                 ),
-                Expanded(child: _recentsContent),
+                Expanded(child: _recentsContent()),
               ],
             ),
           ),
@@ -51,51 +48,61 @@ class _StartPageState extends State<StartPage> {
       } else {
         return Scaffold(
           drawer: Drawer(
-              child: Column(
-            children: [
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 30.0),
-                child: Icon(Icons.menu),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: _menuContent,
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 30.0),
+                  child: Icon(Icons.menu),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: _menuContent,
+                ),
+              ],
+            ),
+          ),
+          appBar: AppBar(
+            title: const Text('Recentes'),
+            actions: [
+              IconButton(
+                onPressed:
+                    (_isLoading || _recents.isEmpty) ? null : _clearRecents,
+                color: Colors.red,
+                icon: const Icon(Icons.delete_forever),
               ),
             ],
-          )),
-          appBar: AppBar(
-            title: const Text('GitF'),
           ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: _recentsContent,
+            child: _recentsContent(showHeader: false),
           ),
         );
       }
     });
   }
 
-  Widget get _recentsContent => Column(
+  Widget _recentsContent({bool showHeader = true}) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Recentes',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                IconButton(
-                  onPressed:
-                      (_isLoading || _recents.isEmpty) ? null : _clearRecents,
-                  color: Colors.red,
-                  icon: const Icon(Icons.delete_forever),
-                ),
-              ],
+          if (showHeader)
+            Padding(
+              padding: const EdgeInsets.only(top: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Recentes',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  IconButton(
+                    onPressed:
+                        (_isLoading || _recents.isEmpty) ? null : _clearRecents,
+                    color: Colors.red,
+                    icon: const Icon(Icons.delete_forever),
+                  ),
+                ],
+              ),
             ),
-          ),
           if (_isLoading)
             const Expanded(
               child: Column(
