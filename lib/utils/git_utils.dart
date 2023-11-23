@@ -42,16 +42,31 @@ class GitUtils {
   }
 
   Future<String> checkout(String branch) async {
-    return await _executeCommand('git checkout -b $branch');
+    final String result = await _executeCommand('git checkout -b $branch');
+    if (result.startsWith('[ERROR]')) {
+      return result;
+    } else {
+      return 'Branch alterada para: $branch';
+    }
   }
 
   Future<String> fetch() async {
-    return await _executeCommand('git fetch');
+    final String result = await _executeCommand('git fetch');
+    if (result.startsWith('[ERROR]')) {
+      return result;
+    } else {
+      return 'Repositório sincronizado.';
+    }
   }
 
   Future<String> pull() async {
     await fetch();
-    return await _executeCommand('git pull');
+    final String result = await _executeCommand('git pull');
+    if (result.startsWith('[ERROR]')) {
+      return result;
+    } else {
+      return 'Arquivos atualizados com sucesso.';
+    }
   }
 
   Future<void> add([List<String>? files]) async {
@@ -72,16 +87,21 @@ class GitUtils {
   }
 
   Future<String> push() async {
-    return await _executeCommand('git push');
+    final String result = await _executeCommand('git push');
+    if (result.startsWith('[ERROR]')) {
+      return result;
+    } else {
+      return 'Alterações enviadas com sucesso.';
+    }
   }
 
   Future<String> commitAndPush([String? message]) async {
+    await push();
     final bool hasChanges = await repositoryHasChanges();
     if (hasChanges) {
       await add();
       await commit(message);
-      await push();
-      return 'Alterações enviadas com sucesso.';
+      return await push();
     } else {
       return "Não há alterações a serem enviadas.";
     }
@@ -92,7 +112,8 @@ class GitUtils {
   }
 
   Future<bool> repositoryHasChanges() async {
-    return (await _executeCommand('git diff')).isNotEmpty;
+    final result = await _executeCommand('git diff');
+    return result.isNotEmpty && !result.startsWith('[ERROR]');
   }
 
   Future<String> _executeCommand(
@@ -104,9 +125,9 @@ class GitUtils {
       final processResult = await shell.run(command);
       final String error = processResult.errText;
       final String result = processResult.outText;
-      return (result.isEmpty && error.isNotEmpty) ? error : result;
+      return (result.isEmpty && error.isNotEmpty) ? '[ERROR] $error' : result;
     } catch (_) {
-      return 'Ocorreu um erro na execução do comando. Tente novamente.';
+      return 'Ocorreu um erro durante a execução. Tente novamente.';
     }
   }
 }
