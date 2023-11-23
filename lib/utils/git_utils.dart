@@ -6,7 +6,7 @@ class GitUtils {
   GitUtils({required this.repositoryModel});
 
   Future<String> version() async {
-    return await _executeCommand('git --version', path: '/');
+    return await _executeCommand('git --version');
   }
 
   Future<String> config(String username, String email) async {
