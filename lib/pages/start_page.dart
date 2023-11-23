@@ -79,7 +79,7 @@ class _StartPageState extends State<StartPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 10.0),
+            padding: const EdgeInsets.only(top: 5),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -88,7 +88,8 @@ class _StartPageState extends State<StartPage> {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 IconButton(
-                  onPressed: _recents.isEmpty ? null : _clearRecents,
+                  onPressed:
+                      (_isLoading || _recents.isEmpty) ? null : _clearRecents,
                   color: Colors.red,
                   icon: const Icon(Icons.delete_forever),
                 ),
@@ -162,6 +163,13 @@ class _StartPageState extends State<StartPage> {
               onTap: _newRepository,
               leading: const Icon(Icons.add),
               title: const Text('Criar um novo repositório'),
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              enabled: false,
+              onTap: _newRepository,
+              leading: const Icon(Icons.cloud),
+              title: const Text('Clonar repositório'),
             ),
             const SizedBox(height: 16),
             ListTile(
