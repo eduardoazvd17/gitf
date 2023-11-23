@@ -74,10 +74,20 @@ class _StartPageState extends State<StartPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 12.0),
-            child: Text(
-              'Recentes',
-              style: Theme.of(context).textTheme.titleMedium,
+            padding: const EdgeInsets.only(top: 10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Recentes',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                IconButton(
+                  onPressed: _recents.isEmpty ? null : _clearRecents,
+                  color: Colors.red,
+                  icon: const Icon(Icons.delete_forever),
+                ),
+              ],
             ),
           ),
           if (_isLoading)
@@ -119,6 +129,16 @@ class _StartPageState extends State<StartPage> {
                       subtitle: Text(
                         repository.path,
                         style: const TextStyle(color: Colors.grey),
+                      ),
+                      trailing: IconButton(
+                        onPressed: () {
+                          setState(() => _recents.remove(e));
+                          _saveRecents();
+                        },
+                        icon: Icon(
+                          Icons.delete,
+                          color: Colors.red[200],
+                        ),
                       ),
                     ),
                   );
@@ -179,6 +199,31 @@ class _StartPageState extends State<StartPage> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => RepositoryPage(repository: repository),
+      ),
+    );
+  }
+
+  void _clearRecents() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Limpar recentes'),
+        content: const Text(
+            'Deseja realmente limpar a lista de repositórios acessados recentemente?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              setState(() => _recents.clear());
+              _saveRecents();
+              Navigator.of(context).pop();
+            },
+            child: const Text('Sim'),
+          ),
+          TextButton(
+            onPressed: Navigator.of(context).pop,
+            child: const Text('Não'),
+          ),
+        ],
       ),
     );
   }
