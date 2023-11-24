@@ -177,9 +177,13 @@ class _RepositoryPageState extends State<RepositoryPage> {
         : () async {
             executeCommand() async {
               setState(() => _isLoading = true);
+              final dateNow = DateTime.now();
+              final String dateString =
+                  '${dateNow.day.toString().padLeft(2, '0')}/${dateNow.month.toString().padLeft(2, '0')}/${dateNow.year.toString()} - ${dateNow.hour.toString().padLeft(2, '0')}:${dateNow.minute.toString().padLeft(2, '0')}:${dateNow.second.toString().padLeft(2, '0')}';
+
               final String result = await command.call();
               final String log =
-                  '$result\n---------------------------------------------------------------------\n${this.log}';
+                  '[$dateString]\nComando: $title\nResultado: $result\n---------------------------------------------------------------------\n${this.log}';
 
               setState(() {
                 this.log = log;

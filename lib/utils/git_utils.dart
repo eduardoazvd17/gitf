@@ -97,11 +97,7 @@ class GitUtils {
 
   Future<String> push() async {
     final String result = await _executeCommand('git push');
-    if (result.startsWith('[ERROR]')) {
-      return result;
-    } else {
-      return 'Alterações enviadas com sucesso.';
-    }
+    return result.replaceAll('[ERROR]', '').trim();
   }
 
   Future<String> commitAndPush([String? message]) async {
@@ -110,7 +106,8 @@ class GitUtils {
     if (hasChanges) {
       await add();
       await commit(message);
-      return await push();
+      await push();
+      return "Alterações enviadas com sucesso.";
     } else {
       return "Não há alterações a serem enviadas.";
     }
@@ -134,7 +131,9 @@ class GitUtils {
       final processResult = await shell.run(command);
       final String error = processResult.errText;
       final String result = processResult.outText;
-      return (result.isEmpty && error.isNotEmpty) ? '[ERROR] $error' : result;
+      return (result.isEmpty && error.isNotEmpty)
+          ? '[ERROR] $error'.trim()
+          : result.trim();
     } catch (_) {
       return 'Ocorreu um erro durante a execução. Tente novamente.';
     }
