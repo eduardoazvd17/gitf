@@ -150,15 +150,7 @@ class _RepositoryPageState extends State<RepositoryPage> {
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       IconButton(
-                        onPressed: () {
-                          final files = RepositoryUtils.listFiles(
-                            widget.repository.path,
-                          );
-                          setState(() {
-                            _files.clear();
-                            _files.addAll(files);
-                          });
-                        },
+                        onPressed: _reloadFiles,
                         icon: const Icon(Icons.refresh),
                       ),
                     ],
@@ -174,10 +166,7 @@ class _RepositoryPageState extends State<RepositoryPage> {
                           )
                         : ListView(
                             children: _files.map((e) {
-                              return ListTile(
-                                title: Text(e.name),
-                                subtitle: Text(e.path),
-                              );
+                              return Text(e.name);
                             }).toList(),
                           ),
                   ),
@@ -244,6 +233,7 @@ class _RepositoryPageState extends State<RepositoryPage> {
         : () async {
             executeCommand() async {
               setState(() => _isLoading = true);
+
               final dateNow = DateTime.now();
               final String dateString =
                   '${dateNow.day.toString().padLeft(2, '0')}/${dateNow.month.toString().padLeft(2, '0')}/${dateNow.year.toString()} - ${dateNow.hour.toString().padLeft(2, '0')}:${dateNow.minute.toString().padLeft(2, '0')}:${dateNow.second.toString().padLeft(2, '0')}';
@@ -252,6 +242,7 @@ class _RepositoryPageState extends State<RepositoryPage> {
               final String log =
                   '[$dateString]\nComando: $title\nResultado: $result\n---------------------------------------------------------------------\n$_log';
 
+              _reloadFiles();
               setState(() {
                 _log = log;
                 _isLoading = false;
@@ -293,5 +284,15 @@ class _RepositoryPageState extends State<RepositoryPage> {
         child: Text(title),
       ),
     );
+  }
+
+  void _reloadFiles() {
+    final files = RepositoryUtils.listFiles(
+      widget.repository.path,
+    );
+    setState(() {
+      _files.clear();
+      _files.addAll(files);
+    });
   }
 }
