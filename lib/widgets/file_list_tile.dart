@@ -16,6 +16,7 @@ class _FileListTileState extends State<FileListTile> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         AnimatedSize(
           curve: Curves.easeIn,

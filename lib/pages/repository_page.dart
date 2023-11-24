@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_resizable_container/flutter_resizable_container.dart';
 import 'package:gitf/models/repository_model.dart';
 import 'package:gitf/utils/git_utils.dart';
-import 'package:resizable_widget/resizable_widget.dart';
 
 import '../models/file_model.dart';
 import '../utils/repository_utils.dart';
@@ -59,14 +59,10 @@ class _RepositoryPageState extends State<RepositoryPage> {
             ),
           ),
           Expanded(
-            child: ResizableWidget(
-              percentages: const [0.65, 0.35],
-              isHorizontalSeparator: true,
-              isDisabledSmartHide: false,
-              separatorSize: 5,
+            child: Column(
               children: [
-                _filesContent,
-                _logContent,
+                Flexible(flex: 65, child: _filesContent),
+                Flexible(flex: 35, child: _logContent),
               ],
             ),
           ),
@@ -151,9 +147,11 @@ class _RepositoryPageState extends State<RepositoryPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Arquivos:',
-                        style: Theme.of(context).textTheme.titleMedium,
+                      Expanded(
+                        child: Text(
+                          'Arquivos:',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
                       ),
                       IconButton(
                         onPressed: _reloadFiles,
@@ -184,8 +182,6 @@ class _RepositoryPageState extends State<RepositoryPage> {
       );
 
   Widget get _logContent => Container(
-        height: double.maxFinite,
-        width: double.maxFinite,
         color: Colors.black,
         child: Padding(
           padding: const EdgeInsets.all(16),
