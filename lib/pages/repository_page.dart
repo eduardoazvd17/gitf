@@ -5,6 +5,7 @@ import 'package:gitf/utils/git_utils.dart';
 
 import '../models/file_model.dart';
 import '../utils/repository_utils.dart';
+import '../widgets/file_list_tile.dart';
 
 class RepositoryPage extends StatefulWidget {
   final RepositoryModel repository;
@@ -166,7 +167,7 @@ class _RepositoryPageState extends State<RepositoryPage> {
                           )
                         : ListView(
                             children: _files.map((e) {
-                              return Text(e.name);
+                              return FileListTile(fileModel: e);
                             }).toList(),
                           ),
                   ),
