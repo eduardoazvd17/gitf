@@ -1,9 +1,8 @@
-import 'package:gitf/models/repository_model.dart';
 import 'package:process_run/process_run.dart';
 
 class GitUtils {
-  final RepositoryModel repositoryModel;
-  GitUtils({required this.repositoryModel});
+  final String? repositoryPath;
+  GitUtils({this.repositoryPath});
 
   Future<String> version() async {
     return await _executeCommand('git --version');
@@ -127,7 +126,7 @@ class GitUtils {
     String? path,
   }) async {
     try {
-      final shell = Shell(workingDirectory: path ?? repositoryModel.path);
+      final shell = Shell(workingDirectory: path ?? repositoryPath);
       final processResult = await shell.run(command);
       final String error = processResult.errText;
       final String result = processResult.outText;

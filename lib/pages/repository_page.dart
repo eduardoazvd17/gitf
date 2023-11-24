@@ -21,7 +21,7 @@ class _RepositoryPageState extends State<RepositoryPage> {
 
   @override
   void initState() {
-    git = GitUtils(repositoryModel: widget.repository);
+    git = GitUtils(repositoryPath: widget.repository.path);
     super.initState();
   }
 
