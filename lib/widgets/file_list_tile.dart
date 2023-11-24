@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gitf/models/file_model.dart';
+import 'package:gitf/utils/repository_utils.dart';
 
 class FileListTile extends StatefulWidget {
   final FileModel fileModel;
@@ -24,13 +25,9 @@ class _FileListTileState extends State<FileListTile> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               InkWell(
-                onTap: () {
-                  if (widget.fileModel.isFolder) {
-                    setState(() {
-                      _isOpen = !_isOpen;
-                    });
-                  }
-                },
+                onTap: widget.fileModel.isFolder
+                    ? () => setState(() => _isOpen = !_isOpen)
+                    : null,
                 child: Row(
                   children: [
                     Padding(
@@ -42,6 +39,21 @@ class _FileListTileState extends State<FileListTile> {
                       ),
                     ),
                     Expanded(child: Text(widget.fileModel.name)),
+                    if (widget.fileModel.isFile)
+                      Row(
+                        children: [
+                          TextButton(
+                            onPressed: () =>
+                                RepositoryUtils.openFile(widget.fileModel.path),
+                            child: const Text('Abrir'),
+                          ),
+                          TextButton(
+                            onPressed: () => RepositoryUtils.openDirectory(
+                                widget.fileModel.path),
+                            child: const Text('Mostrar na pasta'),
+                          ),
+                        ],
+                      )
                   ],
                 ),
               ),

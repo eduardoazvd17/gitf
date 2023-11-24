@@ -3,9 +3,16 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:gitf/models/file_model.dart';
 import 'package:open_dir/open_dir.dart';
+import 'package:open_file_plus/open_file_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RepositoryUtils {
+  static void openFile(String path) async {
+    try {
+      OpenFile.open(path);
+    } catch (_) {}
+  }
+
   static void openDirectory(String path) async {
     try {
       final openDir = OpenDir();

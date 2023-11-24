@@ -40,6 +40,7 @@ dependencies:
   open_dir: ^0.0.1+5
   process_run: ^0.13.2
   url_launcher: ^6.2.1
+  open_file_plus: ^3.4.1
 
 dev_dependencies:
   flutter_test:
