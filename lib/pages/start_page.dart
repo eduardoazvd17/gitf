@@ -403,6 +403,8 @@ class _StartPageState extends State<StartPage> {
                     onPressed: () async {
                       final name = nameController.text.trim();
                       final email = emailController.text.trim();
+                      if (name.isEmpty || email.isEmpty) return;
+
                       final git = GitUtils();
                       await git.setConfig(name, email);
                       final gitUserModel = await git.checkConfig();
