@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gitf/models/repository_model.dart';
 import 'package:gitf/pages/repository_page.dart';
+import 'package:gitf/utils/git_utils.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../utils/repository_utils.dart';
@@ -13,15 +14,21 @@ class StartPage extends StatefulWidget {
 }
 
 class _StartPageState extends State<StartPage> {
+  bool? _gitConfigStatus;
   bool _isLoading = true;
   late final List<String> _recents;
 
+  bool get buttonIsEnabled => _gitConfigStatus == true && !_isLoading;
+
   @override
   void initState() {
-    RepositoryUtils.loadRecents().then((recents) {
-      setState(() {
-        _recents = recents;
-        _isLoading = false;
+    GitUtils().checkConfig().then((value) {
+      setState(() => _gitConfigStatus = value);
+      RepositoryUtils.loadRecents().then((recents) {
+        setState(() {
+          _recents = recents;
+          _isLoading = false;
+        });
       });
     });
     super.initState();
@@ -150,6 +157,7 @@ class _StartPageState extends State<StartPage> {
                   return Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: ListTile(
+                      enabled: buttonIsEnabled,
                       onTap: () => _open(repository),
                       title: Text(repository.name),
                       subtitle: Text(
@@ -206,6 +214,7 @@ class _StartPageState extends State<StartPage> {
             ),
             const SizedBox(height: 16),
             ListTile(
+              enabled: buttonIsEnabled,
               onTap: _openRepository,
               leading: const Icon(Icons.open_in_browser),
               title: const Text('Abrir um repositório existente'),
