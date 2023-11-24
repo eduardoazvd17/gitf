@@ -319,7 +319,7 @@ class _StartPageState extends State<StartPage> {
             ),
             const SizedBox(height: 5),
             const Text('Gerenciamento de Repositórios'),
-            const SizedBox(height: 15),
+            const SizedBox(height: 20),
             const Text('Desenvolvido por: Eduardo Azevedo'),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -346,14 +346,13 @@ class _StartPageState extends State<StartPage> {
                 ),
               ],
             ),
+            const SizedBox(height: 20),
+            TextButton(
+              onPressed: Navigator.of(context).pop,
+              child: const Text('Fechar'),
+            ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: Navigator.of(context).pop,
-            child: const Text('Fechar'),
-          ),
-        ],
       ),
     );
   }
@@ -365,11 +364,16 @@ class _StartPageState extends State<StartPage> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Alterar usuário do Git'),
+        title: Text(
+          '${_gitUserModel == null ? 'Inserir' : 'Alterar'} identificação no Git',
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Seu nome e e-mail serão utilizados para identificação'),
+            const Text(
+              'Insira seu nome de usuário e seu e-mail nos campos abaixo\nambos serão usados apenas para identificação.',
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: 10),
             SizedBox(
               width: 250,
