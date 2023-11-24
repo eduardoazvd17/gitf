@@ -17,7 +17,10 @@ class GitUtils {
       'git config --global user.email',
     );
 
-    if (name.isNotEmpty && email.isNotEmpty) {
+    if (name.isNotEmpty &&
+        email.isNotEmpty &&
+        !name.startsWith('[ERROR]') &&
+        !email.startsWith('[ERROR]')) {
       return GitUserModel(name: name, email: email);
     } else {
       return null;
@@ -143,7 +146,7 @@ class GitUtils {
           ? '[ERROR] $error'.trim()
           : result.trim();
     } catch (_) {
-      return 'Ocorreu um erro durante a execução. Tente novamente.';
+      return '[ERROR] Ocorreu um erro durante a execução. Tente novamente.';
     }
   }
 }

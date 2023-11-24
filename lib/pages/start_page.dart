@@ -16,7 +16,6 @@ class StartPage extends StatefulWidget {
 
 class _StartPageState extends State<StartPage> {
   GitUserModel? _gitUserModel;
-  String? _userError;
   bool _isLoading = true;
   late final List<String> _recents;
 
