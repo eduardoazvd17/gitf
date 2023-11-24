@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gitf/models/git_user_model.dart';
 import 'package:gitf/models/repository_model.dart';
 import 'package:gitf/pages/repository_page.dart';
 import 'package:gitf/utils/git_utils.dart';
@@ -14,16 +15,17 @@ class StartPage extends StatefulWidget {
 }
 
 class _StartPageState extends State<StartPage> {
-  bool? _gitConfigStatus;
+  GitUserModel? _gitUserModel;
   bool _isLoading = true;
   late final List<String> _recents;
 
-  bool get buttonIsEnabled => _gitConfigStatus == true && !_isLoading;
+  bool get buttonIsEnabled => _gitUserModel != null && !_isLoading;
 
   @override
   void initState() {
-    GitUtils().checkConfig().then((value) {
-      setState(() => _gitConfigStatus = value);
+    GitUtils().checkConfig().then((gitUserModel) {
+      setState(() => _gitUserModel = gitUserModel);
+      if (_gitUserModel == null) _changeGitUser();
       RepositoryUtils.loadRecents().then((recents) {
         setState(() {
           _recents = recents;
@@ -219,12 +221,21 @@ class _StartPageState extends State<StartPage> {
               leading: const Icon(Icons.open_in_browser),
               title: const Text('Abrir um repositório existente'),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 32),
             ListTile(
               onTap: _aboutApp,
               leading: const Icon(Icons.info_outline),
-              title: const Text('Sobre'),
+              title: const Text('Sobre este app'),
             ),
+            if (_gitUserModel != null) ...[
+              const SizedBox(height: 32),
+              ListTile(
+                onTap: _changeGitUser,
+                leading: const Icon(Icons.change_circle_outlined),
+                title: Text(_gitUserModel!.name),
+                subtitle: Text(_gitUserModel!.email),
+              ),
+            ]
           ],
         ),
       );
@@ -346,4 +357,6 @@ class _StartPageState extends State<StartPage> {
       ),
     );
   }
+
+  void _changeGitUser() {}
 }

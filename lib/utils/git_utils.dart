@@ -1,3 +1,4 @@
+import 'package:gitf/models/git_user_model.dart';
 import 'package:process_run/process_run.dart';
 
 class GitUtils {
@@ -8,11 +9,19 @@ class GitUtils {
     return await _executeCommand('git --version');
   }
 
-  Future<bool> checkConfig() async {
-    final String name = await _executeCommand('git config --global user.name');
-    final String email =
-        await _executeCommand('git config --global user.email');
-    return name.isNotEmpty && email.isNotEmpty;
+  Future<GitUserModel?> checkConfig() async {
+    final String name = await _executeCommand(
+      'git config --global user.name',
+    );
+    final String email = await _executeCommand(
+      'git config --global user.email',
+    );
+
+    if (name.isNotEmpty && email.isNotEmpty) {
+      return GitUserModel(name: name, email: email);
+    } else {
+      return null;
+    }
   }
 
   Future<void> setConfig(String username, String email) async {
