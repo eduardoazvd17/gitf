@@ -1,16 +1,25 @@
-# gitf
+# GitF
 
-A new Flutter project.
+Um gerenciador de repositórios Git para iniciantes. 
+Esse projeto foi criado apenas para testar o desenvolvimento de apps desktop com o Flutter.
 
-## Getting Started
+## Tecnologias utilizadas
 
-This project is a starting point for a Flutter application.
+Pra esse projeto optei por utilizar StatefullWidgets, visto que é algo bem simples e prático pra se utilizar pacotes de gerencia de estado e injeção de dependências. Já os packages, estou utilizando: 
+- file_picker - Para selecionar diretórios.
+- shared_preferences - Para o armazenamento de dados locais.
+- open_dir - Para abrir o diretório selecionado.
+- process_run - Para a execução dos comandos Git.
+- url_launcher - Para a abertura de links externos.
 
-A few resources to get you started if this is your first Flutter project:
+## Capturas de tela
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Tela inicial
+<div align="center">
+	<img src="./screenshots/start_page.png"/>
+</div>
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Repositório selecionado
+<div align="center">
+    <img src="./screenshots/repository_page.png"/>
+</div>
