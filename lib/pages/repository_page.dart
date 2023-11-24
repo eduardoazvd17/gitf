@@ -59,21 +59,14 @@ class _RepositoryPageState extends State<RepositoryPage> {
             ),
           ),
           Expanded(
-            child: Column(
+            child: ResizableWidget(
+              percentages: const [0.65, 0.35],
+              isHorizontalSeparator: true,
+              isDisabledSmartHide: false,
+              separatorSize: 5,
               children: [
-                // Flexible(flex: 6, child: _filesContent),
-                // Flexible(flex: 4, child: _logContent),
-                Expanded(
-                  child: ResizableWidget(
-                    percentages: const [0.65, 0.35],
-                    isHorizontalSeparator: true,
-                    isDisabledSmartHide: false,
-                    children: [
-                      _filesContent,
-                      _logContent,
-                    ],
-                  ),
-                ),
+                _filesContent,
+                _logContent,
               ],
             ),
           ),
