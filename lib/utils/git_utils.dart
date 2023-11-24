@@ -90,7 +90,7 @@ class GitUtils {
 
   Future<String> commit([String? message]) async {
     final String commitMessage = (message == null || message.trim().isEmpty)
-        ? '[GitF] Alterações sem descrição.'
+        ? '[GitF] Alteracoes sem descricao.'
         : message;
     return await _executeCommand('git commit -m "$commitMessage"');
   }
