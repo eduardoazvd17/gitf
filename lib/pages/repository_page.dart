@@ -59,8 +59,8 @@ class _RepositoryPageState extends State<RepositoryPage> {
           Expanded(
             child: Column(
               children: [
-                Expanded(child: _filesContent),
-                Expanded(child: _logContent),
+                Flexible(flex: 6, child: _filesContent),
+                Flexible(flex: 4, child: _logContent),
               ],
             ),
           ),
