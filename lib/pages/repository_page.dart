@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gitf/models/repository_model.dart';
 import 'package:gitf/utils/git_utils.dart';
+import 'package:resizable_widget/resizable_widget.dart';
 
 import '../models/file_model.dart';
 import '../utils/repository_utils.dart';
@@ -60,8 +61,19 @@ class _RepositoryPageState extends State<RepositoryPage> {
           Expanded(
             child: Column(
               children: [
-                Flexible(flex: 6, child: _filesContent),
-                Flexible(flex: 4, child: _logContent),
+                // Flexible(flex: 6, child: _filesContent),
+                // Flexible(flex: 4, child: _logContent),
+                Expanded(
+                  child: ResizableWidget(
+                    percentages: const [0.65, 0.35],
+                    isHorizontalSeparator: true,
+                    isDisabledSmartHide: false,
+                    children: [
+                      _filesContent,
+                      _logContent,
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
