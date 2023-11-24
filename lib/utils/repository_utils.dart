@@ -58,17 +58,6 @@ class RepositoryUtils {
       final List<FileModel> files = [];
       final List<FileSystemEntity> rawFiles = Directory(path).listSync();
       _filesMapping(path, rawFiles, files);
-
-      files.sort((a, b) {
-        if (a.children == null && b.children != null) {
-          return 1;
-        } else if (a.children != null && b.children == null) {
-          return -1;
-        } else {
-          return a.name.toLowerCase().compareTo(b.name.toLowerCase());
-        }
-      });
-
       return files;
     } catch (_) {
       return [];
@@ -80,6 +69,18 @@ class RepositoryUtils {
     List<FileSystemEntity> rawFiles,
     List<FileModel> files,
   ) {
+    void sort(List<FileModel> files) {
+      files.sort((a, b) {
+        if (a.children == null && b.children != null) {
+          return 1;
+        } else if (a.children != null && b.children == null) {
+          return -1;
+        } else {
+          return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+        }
+      });
+    }
+
     for (final rawFile in rawFiles) {
       final String name = rawFile.path.replaceAll('$path/', '');
       if (rawFile.statSync().type == FileSystemEntityType.directory) {
@@ -87,6 +88,7 @@ class RepositoryUtils {
         final List<FileSystemEntity> rawChildren =
             Directory(rawFile.path).listSync();
         _filesMapping(rawFile.path, rawChildren, children);
+        sort(children);
         files.add(
           FileModel(name: name, path: rawFile.path, children: children),
         );
@@ -96,5 +98,6 @@ class RepositoryUtils {
         );
       }
     }
+    sort(files);
   }
 }
