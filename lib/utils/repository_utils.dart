@@ -82,7 +82,8 @@ class RepositoryUtils {
     }
 
     for (final rawFile in rawFiles) {
-      final String name = rawFile.path.replaceAll('$path/', '');
+      final String name =
+          rawFile.path.replaceAll('$path/', '').replaceAll('$path\\', '');
       if (rawFile.statSync().type == FileSystemEntityType.directory) {
         final List<FileModel> children = [];
         final List<FileSystemEntity> rawChildren =
