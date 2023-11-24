@@ -16,10 +16,11 @@ class StartPage extends StatefulWidget {
 
 class _StartPageState extends State<StartPage> {
   GitUserModel? _gitUserModel;
+  String? _userError;
   bool _isLoading = true;
   late final List<String> _recents;
 
-  bool get buttonIsEnabled => _gitUserModel != null && !_isLoading;
+  bool get _buttonIsEnabled => _gitUserModel != null && !_isLoading;
 
   @override
   void initState() {
@@ -159,7 +160,7 @@ class _StartPageState extends State<StartPage> {
                   return Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: ListTile(
-                      enabled: buttonIsEnabled,
+                      enabled: _buttonIsEnabled,
                       onTap: () => _open(repository),
                       title: Text(repository.name),
                       subtitle: Text(
@@ -216,7 +217,7 @@ class _StartPageState extends State<StartPage> {
             ),
             const SizedBox(height: 16),
             ListTile(
-              enabled: buttonIsEnabled,
+              enabled: _buttonIsEnabled,
               onTap: _openRepository,
               leading: const Icon(Icons.open_in_browser),
               title: const Text('Abrir um repositório existente'),
@@ -358,5 +359,69 @@ class _StartPageState extends State<StartPage> {
     );
   }
 
-  void _changeGitUser() {}
+  void _changeGitUser() {
+    final nameController = TextEditingController();
+    final emailController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Alterar usuário do Git'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Seu nome e e-mail serão utilizados para identificação'),
+            const SizedBox(height: 10),
+            SizedBox(
+              width: 250,
+              child: TextField(
+                controller: nameController,
+                decoration: const InputDecoration(
+                  label: Text("Nome:"),
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 250,
+              child: TextField(
+                controller: emailController,
+                decoration: const InputDecoration(
+                  label: Text("E-mail:"),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 30),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    onPressed: () async {
+                      final name = nameController.text.trim();
+                      final email = emailController.text.trim();
+                      final git = GitUtils();
+                      await git.setConfig(name, email);
+                      final gitUserModel = await git.checkConfig();
+                      setState(() => _gitUserModel = gitUserModel);
+                      if (_gitUserModel != null) {
+                        // ignore: use_build_context_synchronously
+                        Navigator.of(context).pop();
+                      }
+                    },
+                    child: const Text("Salvar"),
+                  ),
+                  if (_gitUserModel != null)
+                    TextButton(
+                      onPressed: Navigator.of(context).pop,
+                      child: const Text("Cancelar"),
+                    ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+      barrierDismissible: _gitUserModel != null,
+    );
+  }
 }
