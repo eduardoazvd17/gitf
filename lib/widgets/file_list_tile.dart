@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:gitf/models/file_model.dart';
 import 'package:gitf/utils/repository_utils.dart';
@@ -49,8 +51,20 @@ class _FileListTileState extends State<FileListTile> {
                             child: const Text('Abrir'),
                           ),
                           TextButton(
-                            onPressed: () => RepositoryUtils.openDirectory(
-                                widget.fileModel.path),
+                            onPressed: () {
+                              if (Platform.isWindows) {
+                                RepositoryUtils.openDirectory(
+                                  widget.fileModel.path.replaceFirst(
+                                    widget.fileModel.name,
+                                    '',
+                                  ),
+                                );
+                              } else {
+                                RepositoryUtils.openDirectory(
+                                  widget.fileModel.path,
+                                );
+                              }
+                            },
                             child: const Text('Mostrar na pasta'),
                           ),
                         ],
