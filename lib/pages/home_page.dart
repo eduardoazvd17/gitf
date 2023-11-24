@@ -7,14 +7,14 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import '../utils/repository_utils.dart';
 
-class StartPage extends StatefulWidget {
-  const StartPage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<StartPage> createState() => _StartPageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _StartPageState extends State<StartPage> {
+class _HomePageState extends State<HomePage> {
   GitUserModel? _gitUserModel;
   bool _isLoading = true;
   late final List<String> _recents;
@@ -38,54 +38,36 @@ class _StartPageState extends State<StartPage> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        if (constraints.maxWidth >= 768) {
-          return Scaffold(
-            body: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _menuContent,
-                  const Padding(
-                    padding: EdgeInsets.only(right: 12.0),
-                    child: VerticalDivider(),
-                  ),
-                  Expanded(child: _recentsContent()),
-                ],
-              ),
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SingleChildScrollView(child: _menuContent),
+            const Padding(
+              padding: EdgeInsets.only(right: 12.0),
+              child: VerticalDivider(),
             ),
-          );
-        } else {
-          return Scaffold(
-            drawer: Drawer(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 30.0),
-                    child: Column(
-                      children: [
-                        Text(
-                          'GitF',
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        const SizedBox(height: 5),
-                        const Text('Gerenciamento de Repositórios'),
-                      ],
-                    ),
-                  ),
-                  const Divider(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: _menuContent,
-                  ),
-                ],
-              ),
-            ),
-            appBar: AppBar(
-              title: const Text('Recentes'),
-              actions: [
+            Expanded(child: _recentsContent),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget get _recentsContent => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Recentes',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
                 IconButton(
                   onPressed:
                       (_isLoading || _recents.isEmpty) ? null : _clearRecents,
@@ -94,38 +76,7 @@ class _StartPageState extends State<StartPage> {
                 ),
               ],
             ),
-            body: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: _recentsContent(showHeader: false),
-            ),
-          );
-        }
-      },
-    );
-  }
-
-  Widget _recentsContent({bool showHeader = true}) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (showHeader)
-            Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Recentes',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  IconButton(
-                    onPressed:
-                        (_isLoading || _recents.isEmpty) ? null : _clearRecents,
-                    color: Colors.red,
-                    icon: const Icon(Icons.delete_forever),
-                  ),
-                ],
-              ),
-            ),
+          ),
           if (_isLoading)
             const Expanded(
               child: Column(

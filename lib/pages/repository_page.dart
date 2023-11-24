@@ -48,7 +48,7 @@ class _RepositoryPageState extends State<RepositoryPage> {
           Padding(
             padding: const EdgeInsets.all(16),
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 200),
+              constraints: const BoxConstraints(maxWidth: 285),
               child: _menuContent,
             ),
           ),
