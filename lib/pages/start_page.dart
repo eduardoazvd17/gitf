@@ -45,6 +45,7 @@ class _StartPageState extends State<StartPage> {
             body: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _menuContent,
                   const Padding(

@@ -43,6 +43,7 @@ class _RepositoryPageState extends State<RepositoryPage> {
         ],
       ),
       body: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
