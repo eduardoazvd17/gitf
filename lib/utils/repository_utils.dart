@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:gitf/models/file_model.dart';
 import 'package:open_dir/open_dir.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -42,6 +43,51 @@ class RepositoryUtils {
       return prefs.getStringList('Recents') ?? [];
     } catch (_) {
       return [];
+    }
+  }
+
+  static List<FileModel> listFiles(String path) {
+    try {
+      final List<FileModel> files = [];
+      final List<FileSystemEntity> rawFiles = Directory(path).listSync();
+      _filesMapping(path, rawFiles, files);
+
+      files.sort((a, b) {
+        if (a.children == null && b.children != null) {
+          return 1;
+        } else if (a.children != null && b.children == null) {
+          return -1;
+        } else {
+          return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+        }
+      });
+
+      return files;
+    } catch (_) {
+      return [];
+    }
+  }
+
+  static void _filesMapping(
+    String path,
+    List<FileSystemEntity> rawFiles,
+    List<FileModel> files,
+  ) {
+    for (final rawFile in rawFiles) {
+      final String name = rawFile.path.replaceAll('$path/', '');
+      if (rawFile.statSync().type == FileSystemEntityType.directory) {
+        final List<FileModel> children = [];
+        final List<FileSystemEntity> rawChildren =
+            Directory(rawFile.path).listSync();
+        _filesMapping(rawFile.path, rawChildren, children);
+        files.add(
+          FileModel(name: name, path: rawFile.path, children: children),
+        );
+      } else {
+        files.add(
+          FileModel(name: name, path: rawFile.path, children: null),
+        );
+      }
     }
   }
 }

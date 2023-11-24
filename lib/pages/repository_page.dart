@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:gitf/models/repository_model.dart';
 import 'package:gitf/utils/git_utils.dart';
 
+import '../models/file_model.dart';
 import '../utils/repository_utils.dart';
 
 class RepositoryPage extends StatefulWidget {
@@ -14,14 +15,17 @@ class RepositoryPage extends StatefulWidget {
 }
 
 class _RepositoryPageState extends State<RepositoryPage> {
-  final TextEditingController commitMessageController = TextEditingController();
+  final TextEditingController _commitMessageController =
+      TextEditingController();
   bool _isLoading = false;
-  String log = '';
-  late final GitUtils git;
+  String _log = '';
+  late final GitUtils _git;
+  late final List<FileModel> _files;
 
   @override
   void initState() {
-    git = GitUtils(repositoryPath: widget.repository.path);
+    _git = GitUtils(repositoryPath: widget.repository.path);
+    _files = RepositoryUtils.listFiles(widget.repository.path);
     super.initState();
   }
 
@@ -52,7 +56,14 @@ class _RepositoryPageState extends State<RepositoryPage> {
               child: _menuContent,
             ),
           ),
-          Expanded(child: _logContent),
+          Expanded(
+            child: Column(
+              children: [
+                Expanded(child: _filesContent),
+                Expanded(child: _logContent),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -72,7 +83,7 @@ class _RepositoryPageState extends State<RepositoryPage> {
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: _commandButton(
               title: 'Atualizar repositório',
-              command: git.pull,
+              command: _git.pull,
             ),
           ),
           const Text(
@@ -84,15 +95,15 @@ class _RepositoryPageState extends State<RepositoryPage> {
             child: Column(
               children: [
                 TextField(
-                  controller: commitMessageController,
+                  controller: _commitMessageController,
                   decoration: const InputDecoration(hintText: "Mensagem..."),
                 ),
                 _commandButton(
                   title: 'Enviar alterações',
                   command: () async {
-                    final String message = commitMessageController.text;
-                    commitMessageController.clear();
-                    return await git.commitAndPush(message);
+                    final String message = _commitMessageController.text;
+                    _commitMessageController.clear();
+                    return await _git.commitAndPush(message);
                   },
                 ),
               ],
@@ -104,23 +115,78 @@ class _RepositoryPageState extends State<RepositoryPage> {
           ),
           _commandButton(
             title: 'Abandonar alterações',
-            command: git.resetHard,
+            command: _git.resetHard,
             showConfirmation: true,
           ),
           const Text(
             'Para visualizar o histórico de envios, clique no botão abaixo:',
             style: style,
           ),
-          _commandButton(title: 'Histórico de envios', command: git.log),
+          _commandButton(title: 'Histórico de envios', command: _git.log),
           const Text(
             'Para visualizar a versão instalada do Git, clique no botão abaixo:',
             style: style,
           ),
-          _commandButton(title: 'Versão do Git', command: git.version),
+          _commandButton(title: 'Versão do Git', command: _git.version),
         ],
       ),
     );
   }
+
+  Widget get _filesContent => Row(
+        children: [
+          const VerticalDivider(width: 0),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Arquivos:',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          final files = RepositoryUtils.listFiles(
+                            widget.repository.path,
+                          );
+                          setState(() {
+                            _files.clear();
+                            _files.addAll(files);
+                          });
+                        },
+                        icon: const Icon(Icons.refresh),
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    child: _files.isEmpty
+                        ? const Center(
+                            child: Text(
+                              'Nenhum arquivo encontrado',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          )
+                        : ListView(
+                            children: _files.map((e) {
+                              return ListTile(
+                                title: Text(e.name),
+                                subtitle: Text(e.path),
+                              );
+                            }).toList(),
+                          ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
 
   Widget get _logContent => Container(
         height: double.maxFinite,
@@ -142,13 +208,13 @@ class _RepositoryPageState extends State<RepositoryPage> {
                     children: [
                       IconButton(
                         onPressed: () {
-                          Clipboard.setData(ClipboardData(text: log));
+                          Clipboard.setData(ClipboardData(text: _log));
                         },
                         icon: const Icon(Icons.copy),
                       ),
                       const SizedBox(width: 10),
                       IconButton(
-                        onPressed: () => setState(() => log = ''),
+                        onPressed: () => setState(() => _log = ''),
                         icon: const Icon(Icons.close),
                       ),
                     ],
@@ -158,7 +224,7 @@ class _RepositoryPageState extends State<RepositoryPage> {
               Expanded(
                 child: SingleChildScrollView(
                   child: SelectableText(
-                    log,
+                    _log,
                     style: const TextStyle(color: Colors.white),
                   ),
                 ),
@@ -184,10 +250,10 @@ class _RepositoryPageState extends State<RepositoryPage> {
 
               final String result = await command.call();
               final String log =
-                  '[$dateString]\nComando: $title\nResultado: $result\n---------------------------------------------------------------------\n${this.log}';
+                  '[$dateString]\nComando: $title\nResultado: $result\n---------------------------------------------------------------------\n$_log';
 
               setState(() {
-                this.log = log;
+                _log = log;
                 _isLoading = false;
               });
             }
