@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_resizable_container/flutter_resizable_container.dart';
 import 'package:gitf/models/repository_model.dart';
 import 'package:gitf/utils/git_utils.dart';
 
