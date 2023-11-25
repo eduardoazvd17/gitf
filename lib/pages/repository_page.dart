@@ -88,7 +88,8 @@ class _RepositoryPageState extends State<RepositoryPage> {
                 // ignore: use_build_context_synchronously
                 await showMenu(
                   context: context,
-                  position: RelativeRect.fill,
+                  elevation: 24,
+                  position: const RelativeRect.fromLTRB(60, 85, 60, 85),
                   items: branches.map((e) {
                     return PopupMenuItem(
                       child: Text(e),
