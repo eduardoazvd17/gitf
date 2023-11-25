@@ -1,3 +1,4 @@
+import 'package:git/git.dart';
 import 'package:gitf/models/git_user_model.dart';
 import 'package:process_run/process_run.dart';
 
@@ -131,6 +132,26 @@ class GitUtils {
   Future<bool> repositoryHasChanges() async {
     final result = await _executeCommand('git diff');
     return result.isNotEmpty && !result.startsWith('[ERROR]');
+  }
+
+  Future<String> currentBranch() async {
+    try {
+      final git = await GitDir.fromExisting(repositoryPath!);
+      final branch = await git.currentBranch();
+      return branch.branchName;
+    } catch (_) {
+      return '';
+    }
+  }
+
+  Future<List<String>> listBranches() async {
+    try {
+      final git = await GitDir.fromExisting(repositoryPath!);
+      final branches = await git.branches();
+      return branches.map((e) => e.branchName).toList();
+    } catch (_) {
+      return [];
+    }
   }
 
   Future<String> _executeCommand(

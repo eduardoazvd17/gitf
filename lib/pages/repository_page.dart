@@ -22,11 +22,15 @@ class _RepositoryPageState extends State<RepositoryPage> {
   String _log = '';
   late final GitUtils _git;
   late final List<FileModel> _files;
+  String _currentBranch = '';
 
   @override
   void initState() {
     _git = GitUtils(repositoryPath: widget.repository.path);
     _files = RepositoryUtils.listFiles(widget.repository.path);
+    _git
+        .currentBranch()
+        .then((value) => setState(() => _currentBranch = value));
     super.initState();
   }
 
@@ -76,6 +80,36 @@ class _RepositoryPageState extends State<RepositoryPage> {
     return SingleChildScrollView(
       child: Column(
         children: [
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: IconButton(
+              onPressed: () async {
+                final List<String> branches = await _git.listBranches();
+                // ignore: use_build_context_synchronously
+                await showMenu(
+                  context: context,
+                  position: RelativeRect.fill,
+                  items: branches.map((e) {
+                    return PopupMenuItem(
+                      child: Text(e),
+                      onTap: () {
+                        if (e != _currentBranch) {
+                          _git.checkout(e);
+                        }
+                      },
+                    );
+                  }).toList(),
+                );
+              },
+              icon: const Icon(Icons.change_circle_outlined),
+            ),
+            title: const Text('Branch'),
+            subtitle: Text(
+              _currentBranch,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          const SizedBox(height: 16),
           const Text(
             'Antes de fazer alterações, atualize o repositório:',
             style: style,
