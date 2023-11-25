@@ -67,7 +67,7 @@ class GitUtils {
     if (result.startsWith('[ERROR]') &&
         !result.contains('Switched to branch') &&
         !result.contains('Already on')) {
-      return result;
+      return 'Não é possível alterar de branch, verifique se possui alterações a serem enviadas e tente alterar após enviá-las - ($result)';
     } else {
       await pull();
       return 'Branch alterada para: $branch';
