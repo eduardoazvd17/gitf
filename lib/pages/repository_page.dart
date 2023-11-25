@@ -94,7 +94,15 @@ class _RepositoryPageState extends State<RepositoryPage> {
                       child: Text(e),
                       onTap: () {
                         if (e != _currentBranch) {
-                          _git.checkout(e);
+                          _git.checkout(e).then((value) {
+                            if (!value.startsWith('[ERROR]')) {
+                              setState(() => _currentBranch = e);
+                              _showLog('Alterar branch',
+                                  'Branch alterada com sucesso - ($value)');
+                            } else {
+                              _showLog('Alterar branch', value);
+                            }
+                          });
                         }
                       },
                     );
@@ -269,19 +277,11 @@ class _RepositoryPageState extends State<RepositoryPage> {
             executeCommand() async {
               setState(() => _isLoading = true);
 
-              final dateNow = DateTime.now();
-              final String dateString =
-                  '${dateNow.day.toString().padLeft(2, '0')}/${dateNow.month.toString().padLeft(2, '0')}/${dateNow.year.toString()} - ${dateNow.hour.toString().padLeft(2, '0')}:${dateNow.minute.toString().padLeft(2, '0')}:${dateNow.second.toString().padLeft(2, '0')}';
-
               final String result = await command.call();
-              final String log =
-                  '[$dateString]\nComando: $title\nResultado: $result\n---------------------------------------------------------------------\n$_log';
+              _showLog(title, result);
 
               _reloadFiles();
-              setState(() {
-                _log = log;
-                _isLoading = false;
-              });
+              setState(() => _isLoading = false);
             }
 
             if (showConfirmation) {
@@ -329,5 +329,14 @@ class _RepositoryPageState extends State<RepositoryPage> {
       _files.clear();
       _files.addAll(files);
     });
+  }
+
+  void _showLog(String command, String result) {
+    final dateNow = DateTime.now();
+    final String dateString =
+        '${dateNow.day.toString().padLeft(2, '0')}/${dateNow.month.toString().padLeft(2, '0')}/${dateNow.year.toString()} - ${dateNow.hour.toString().padLeft(2, '0')}:${dateNow.minute.toString().padLeft(2, '0')}:${dateNow.second.toString().padLeft(2, '0')}';
+    final String log =
+        '[$dateString]\nComando: $command\nResultado: $result\n---------------------------------------------------------------------\n$_log';
+    setState(() => _log = log);
   }
 }

@@ -62,7 +62,8 @@ class GitUtils {
   }
 
   Future<String> checkout(String branch) async {
-    final String result = await _executeCommand('git checkout -b $branch');
+    await _executeCommand('git checkout -b $branch');
+    final String result = await _executeCommand('git switch $branch');
     if (result.startsWith('[ERROR]')) {
       return result;
     } else {
